@@ -23,13 +23,26 @@ const playerSchema = new mongoose.Schema({
 
 const Player = mongoose.model("Player", playerSchema);
 
-// Routes
 app.post("/register", async (req, res) => {
   const { username } = req.body;
-  if (!username) return res.status(400).send("Username is required");
+
+  if (!username || username.length < 5) {
+    return res
+      .status(400)
+      .json({ message: "Username must be at least 5 characters" });
+  }
+
+  const existingUser = await Player.findOne({ username });
+
+  if (existingUser) {
+    return res
+      .status(409)
+      .json({ message: "Username already exists. Please choose another." });
+  }
 
   const player = new Player({ username });
   await player.save();
+
   res.json({ message: "Player registered", id: player._id });
 });
 
@@ -42,28 +55,6 @@ app.post("/update-coins", async (req, res) => {
 app.get("/leaderboard", async (req, res) => {
   const topPlayers = await Player.find().sort({ coins: -1 }).limit(10);
   res.json(topPlayers);
-});
-
-// Check if username is already taken
-app.get("/check-username", async (req, res) => {
-  const { username } = req.query;
-
-  if (!username || username.length < 5) {
-    return res
-      .status(400)
-      .json({
-        valid: false,
-        message: "Username must be at least 5 characters",
-      });
-  }
-
-  const existing = await Player.findOne({ username });
-
-  if (existing) {
-    return res.json({ valid: false, message: "Username is already taken" });
-  }
-
-  res.json({ valid: true, message: "Username is available" });
 });
 
 // Start server
