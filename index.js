@@ -46,6 +46,28 @@ app.post("/register", async (req, res) => {
   res.json({ message: "Player registered", id: player._id });
 });
 
+// Check if username is valid and available
+app.get("/check-username", async (req, res) => {
+  const { username } = req.query;
+
+  if (!username || username.length < 4) {
+    return res
+      .status(400)
+      .json({
+        valid: false,
+        message: "Username must be at least 4 characters",
+      });
+  }
+
+  const existing = await Player.findOne({ username });
+
+  if (existing) {
+    return res.json({ valid: false, message: "Username is already taken" });
+  }
+
+  res.json({ valid: true, message: "Username is available" });
+});
+
 app.post("/update-coins", async (req, res) => {
   const { id, coins } = req.body;
   const player = await Player.findByIdAndUpdate(id, { coins }, { new: true });
