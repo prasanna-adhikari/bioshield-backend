@@ -1,5 +1,4 @@
 const Player = require("../models/player");
-
 const jwt = require("jsonwebtoken");
 
 exports.registerPlayer = async (req, res) => {
@@ -23,12 +22,13 @@ exports.registerPlayer = async (req, res) => {
     const player = new Player({ username });
     await player.save();
 
-    // Generate JWT without expiration
+    // Generate JWT (no expiration)
     const token = jwt.sign(
       { id: player._id, username: player.username },
       process.env.JWT_SECRET
     );
 
+    // ✅ Send both token and player data
     res.status(201).json({
       message: "Player registered",
       player: {
