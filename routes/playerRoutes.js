@@ -20,6 +20,6 @@ router.get("/leaderboard", getLeaderboard);
 // Protected routes
 router.post("/update-coins", verifyToken, updateCoins);
 router.get("/user/:id", verifyToken, getUserById);
-router.get("/user/me", verifyToken, getCurrentUser);
+router.get("/user/profile", verifyToken, getCurrentUser);
 
 module.exports = router;
