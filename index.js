@@ -10,9 +10,15 @@ app.use(express.json());
 // MongoDB connection
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected ✅"))
-  .catch((err) => console.error("MongoDB connection failed ❌", err));
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB connection failed", err));
 
 // Routes
 const playerRoutes = require("./routes/playerRoutes");
-app.use("/api", playerRoutes); //
+app.use("/api", playerRoutes);
+
+// Port binding for Render
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
