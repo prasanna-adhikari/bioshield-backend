@@ -8,6 +8,7 @@ const {
   getLeaderboard,
   getUserById,
   getCurrentUser,
+  updateUsername,
 } = require("../controllers/playerController");
 
 const { verifyToken } = require("../middleware/auth");
@@ -21,5 +22,6 @@ router.get("/leaderboard", getLeaderboard);
 router.post("/update-coins", verifyToken, updateCoins);
 router.get("/user/:id", verifyToken, getUserById);
 router.get("/currentuser/profile", verifyToken, getCurrentUser);
+router.post("/user/update-username", verifyToken, updateUsername);
 
 module.exports = router;

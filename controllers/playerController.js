@@ -149,3 +149,43 @@ exports.getCurrentUser = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.updateUsername = async (req, res) => {
+  try {
+    const { id, newUsername } = req.body;
+
+    if (!id || !newUsername || newUsername.length < 5) {
+      return res.status(400).json({ message: "Invalid input" });
+    }
+
+    // Check if the new username is already taken
+    const existing = await Player.findOne({ username: newUsername });
+    if (existing) {
+      return res.status(409).json({ message: "Username is already taken" });
+    }
+
+    // Update the username
+    const updatedPlayer = await Player.findByIdAndUpdate(
+      id,
+      { username: newUsername },
+      { new: true }
+    );
+
+    if (!updatedPlayer) {
+      return res.status(404).json({ message: "Player not found" });
+    }
+
+    res.json({
+      message: "Username updated successfully",
+      player: {
+        id: updatedPlayer._id,
+        username: updatedPlayer.username,
+        coins: updatedPlayer.coins,
+        date_joined: updatedPlayer.date_joined,
+      },
+    });
+  } catch (error) {
+    console.error("Error updating username:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
