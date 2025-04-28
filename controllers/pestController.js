@@ -1,4 +1,4 @@
-import Pest from "../models/pest";
+const Pest = require("../models/Pest");
 exports.addPests = async (req, res) => {
   try {
     const pestList = req.body.pests;
