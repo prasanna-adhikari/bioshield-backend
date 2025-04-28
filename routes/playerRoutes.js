@@ -9,6 +9,7 @@ const {
   getUserById,
   getCurrentUser,
   updateUsername,
+  updateLevelProgress,
 } = require("../controllers/playerController");
 
 const { verifyToken } = require("../middleware/auth");
@@ -23,5 +24,6 @@ router.post("/update-coins", verifyToken, updateCoins);
 router.get("/user/:id", verifyToken, getUserById);
 router.get("/currentuser/profile", verifyToken, getCurrentUser);
 router.post("/user/update-username", verifyToken, updateUsername);
+router.post("/user/update-level", verifyToken, updateLevelProgress);
 
 module.exports = router;

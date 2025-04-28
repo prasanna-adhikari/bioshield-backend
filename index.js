@@ -15,6 +15,9 @@ mongoose
 
 // Routes
 const playerRoutes = require("./routes/playerRoutes");
+const pestRoutes = require("./routes/pestRoutes");
+app.use("/api/pests", pestRoutes);
+
 app.use("/api", playerRoutes);
 
 // Port binding for Render

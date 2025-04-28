@@ -189,3 +189,35 @@ exports.updateUsername = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.updateLevelProgress = async (req, res) => {
+  try {
+    const { id, completedLevel } = req.body;
+
+    if (!id || typeof completedLevel !== "number") {
+      return res.status(400).json({ message: "Invalid input" });
+    }
+
+    const player = await Player.findById(id);
+
+    if (!player) {
+      return res.status(404).json({ message: "Player not found" });
+    }
+
+    // Unlock next level if not already unlocked
+    const nextLevel = completedLevel + 1;
+    if (!player.unlocked_levels.includes(nextLevel)) {
+      player.unlocked_levels.push(nextLevel);
+    }
+
+    await player.save();
+
+    res.json({
+      message: "Level progress updated",
+      unlocked_levels: player.unlocked_levels,
+    });
+  } catch (error) {
+    console.error("Error updating level progress:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
