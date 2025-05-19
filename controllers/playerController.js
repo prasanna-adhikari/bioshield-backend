@@ -1,5 +1,6 @@
 const Player = require("../models/player");
 const jwt = require("jsonwebtoken");
+const fantasyNames = require("fantasy-name-generator");
 
 exports.registerPlayer = async (req, res) => {
   try {
@@ -219,5 +220,32 @@ exports.updateLevelProgress = async (req, res) => {
   } catch (error) {
     console.error("Error updating level progress:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+// random username
+exports.generateUserName = async (req, res) => {
+  try {
+    const { nameByRace } = await import("fantasy-name-generator");
+
+    const races = ["angel", "demon", "darkelf", "dragon", "fairy"];
+    const generatedNames = new Set();
+
+    while (generatedNames.size < 5) {
+      const race = races[Math.floor(Math.random() * races.length)];
+      const name = nameByRace(race, { allowMultipleNames: false });
+
+      if (typeof name !== "string") continue;
+
+      const exists = await Player.findOne({ username: name });
+      if (!exists) {
+        generatedNames.add(name);
+      }
+    }
+
+    res.status(200).json({ usernames: Array.from(generatedNames) });
+  } catch (err) {
+    console.error("❌ Error generating usernames:", err);
+    res.status(500).json({ error: "Username generation failed" });
   }
 };
